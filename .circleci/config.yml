@@ -21,18 +21,26 @@ jobs:
           name:  Install Database driver
           command: |
             #Download the desired package(s)
-            curl -O https://download.microsoft.com/download/1/f/f/1fffb537-26ab-4947-a46a-7a45c27f6f77/msodbcsql18_18.2.1.1-1_amd64.apk
-            curl -O https://download.microsoft.com/download/1/f/f/1fffb537-26ab-4947-a46a-7a45c27f6f77/mssql-tools18_18.2.1.1-1_amd64.apk
-            #(Optional) Verify signature, if 'gpg' is missing install it using 'apk add gnupg':
-            curl -O https://download.microsoft.com/download/1/f/f/1fffb537-26ab-4947-a46a-7a45c27f6f77/msodbcsql18_18.2.1.1-1_amd64.sig
-            curl -O https://download.microsoft.com/download/1/f/f/1fffb537-26ab-4947-a46a-7a45c27f6f77/mssql-tools18_18.2.1.1-1_amd64.sig
-            curl https://packages.microsoft.com/keys/microsoft.asc  | gpg --import -
-            gpg --verify msodbcsql18_18.2.1.1-1_amd64.sig msodbcsql18_18.2.1.1-1_amd64.apk
-            gpg --verify mssql-tools18_18.2.1.1-1_amd64.sig mssql-tools18_18.2.1.1-1_amd64.apk
+            if ! [[ "18.04 20.04 22.04" == *"$(lsb_release -rs)"* ]];
+            then
+                echo "Ubuntu $(lsb_release -rs) is not currently supported.";
+                exit;
+            fi
 
-            #Install the package(s)
-            sudo apk add --allow-untrusted msodbcsql18_18.2.1.1-1_amd64.apk
-            sudo apk add --allow-untrusted mssql-tools18_18.2.1.1-1_amd64.apk
+            sudo su
+            curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+
+            curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/mssql-release.list
+
+            exit
+            sudo apt-get update
+            sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+            # optional: for bcp and sqlcmd
+            sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
+            echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+            source ~/.bashrc
+            # optional: for unixODBC development headers
+            sudo apt-get install -y unixodbc-dev
 
       - run:
           name:  Download cc-test-reporter
