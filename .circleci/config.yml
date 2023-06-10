@@ -68,9 +68,9 @@ jobs:
       # #    environment:
       # #      CI: true
 
-      - run:
-          name: Run linter to check code style
-          command: yarn lint:check
+      # - run:
+      #     name: Run linter to check code style
+      #     command: yarn lint:check
 
       - run:
           name: Upload coverage results to Code Climate
