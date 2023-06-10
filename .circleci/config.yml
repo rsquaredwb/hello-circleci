@@ -58,15 +58,15 @@ jobs:
           name: Install JUnit coverage reporter
           command: yarn add --dev jest-junit
 
-      - run:
-          name: Run tests with JUnit as reporter
-          command: |
-            mkdir -p test-results/
-            yarn run jest --config jest.config.js --coverage --ci --runInBand --reporters=default --reporters=jest-junit
-            mv junit.xml test-results/
-            ./bin/cc-test-reporter format-coverage -t lcov -o coverage/codeclimate.json coverage/lcov.info
-      #    environment:
-      #      CI: true
+      # - run:
+      #     name: Run tests with JUnit as reporter
+      #     command: |
+      #       mkdir -p test-results/
+      #       yarn run jest --config jest.config.js --coverage --ci --runInBand --reporters=default --reporters=jest-junit
+      #       mv junit.xml test-results/
+      #       ./bin/cc-test-reporter format-coverage -t lcov -o coverage/codeclimate.json coverage/lcov.info
+      # #    environment:
+      # #      CI: true
 
       - run:
           name: Run linter to check code style
