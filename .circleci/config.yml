@@ -72,10 +72,10 @@ jobs:
       #     name: Run linter to check code style
       #     command: yarn lint:check
 
-      - run:
-          name: Upload coverage results to Code Climate
-          command: |
-            ./bin/cc-test-reporter upload-coverage -i coverage/codeclimate.json -r cf04aff91de20704e0e95b5520175a98046d238f24c2b3b9256552138b4a07bd
+      # - run:
+      #     name: Upload coverage results to Code Climate
+      #     command: |
+      #       ./bin/cc-test-reporter upload-coverage -i coverage/codeclimate.json -r cf04aff91de20704e0e95b5520175a98046d238f24c2b3b9256552138b4a07bd
 
       - save_cache:
           paths:
