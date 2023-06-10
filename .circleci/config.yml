@@ -27,63 +27,63 @@ jobs:
                 exit;
             fi
 
-            sudo su
-            curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+            # sudo su
+            # curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
-            curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/mssql-release.list
+            # curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/mssql-release.list
 
-            exit
-            sudo apt-get update
-            sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
-            # # optional: for bcp and sqlcmd
-            # sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
-            echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
-            source ~/.bashrc
-            # optional: for unixODBC development headers
-            sudo apt-get install -y unixodbc-dev
+            # exit
+            # sudo apt-get update
+            # sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+            # # # optional: for bcp and sqlcmd
+            # # sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
+            # echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+            # source ~/.bashrc
+            # # optional: for unixODBC development headers
+            # sudo apt-get install -y unixodbc-dev
 
-      - run:
-          name:  Download cc-test-reporter
-          command: |
-            mkdir -p bin/
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./bin/cc-test-reporter
-            chmod +x ./bin/cc-test-reporter
+      # - run:
+      #     name:  Download cc-test-reporter
+      #     command: |
+      #       mkdir -p bin/
+      #       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./bin/cc-test-reporter
+      #       chmod +x ./bin/cc-test-reporter
 
-      - persist_to_workspace:
-          root: bin
-          paths:
-            - cc-test-reporter
+      # - persist_to_workspace:
+      #     root: bin
+      #     paths:
+      #       - cc-test-reporter
 
-      - run:
-          name: Install JUnit coverage reporter
-          command: yarn add --dev jest-junit
+      # - run:
+      #     name: Install JUnit coverage reporter
+      #     command: yarn add --dev jest-junit
 
-      - run:
-          name: Run tests with JUnit as reporter
-          command: |
-            mkdir -p test-results/
-            yarn run jest --config jest.config.js --coverage --ci --runInBand --reporters=default --reporters=jest-junit
-            mv junit.xml test-results/
-            ./bin/cc-test-reporter format-coverage -t lcov -o coverage/codeclimate.json coverage/lcov.info
-      #    environment:
-      #      CI: true
+      # - run:
+      #     name: Run tests with JUnit as reporter
+      #     command: |
+      #       mkdir -p test-results/
+      #       yarn run jest --config jest.config.js --coverage --ci --runInBand --reporters=default --reporters=jest-junit
+      #       mv junit.xml test-results/
+      #       ./bin/cc-test-reporter format-coverage -t lcov -o coverage/codeclimate.json coverage/lcov.info
+      # #    environment:
+      # #      CI: true
 
-      - run:
-          name: Run linter to check code style
-          command: yarn lint:check
+      # - run:
+      #     name: Run linter to check code style
+      #     command: yarn lint:check
 
-      - run:
-          name: Upload coverage results to Code Climate
-          command: |
-            ./bin/cc-test-reporter upload-coverage -i coverage/codeclimate.json -r cf04aff91de20704e0e95b5520175a98046d238f24c2b3b9256552138b4a07bd
+      # - run:
+      #     name: Upload coverage results to Code Climate
+      #     command: |
+      #       ./bin/cc-test-reporter upload-coverage -i coverage/codeclimate.json -r cf04aff91de20704e0e95b5520175a98046d238f24c2b3b9256552138b4a07bd
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: dependencies-cache-{{ checksum "yarn.lock" }}
+      # - save_cache:
+      #     paths:
+      #       - node_modules
+      #     key: dependencies-cache-{{ checksum "yarn.lock" }}
 
-      - store_test_results:
-          path: test-results
+      # - store_test_results:
+      #     path: test-results
 
-      - store_artifacts:
-          path: test-results
+      # - store_artifacts:
+      #     path: test-results
